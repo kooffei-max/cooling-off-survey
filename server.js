@@ -96,31 +96,41 @@ app.post('/submit', async (req, res) => {
     ];
     
     try {
-      // シートを完全にクリアする
-      await sheets.spreadsheets.values.clear({
+      // 既存データの確認（A列のデータを取得して行数を確認）
+      const checkResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A:Z`,
+        range: `${SHEET_NAME}!A:A`,
       });
       
-      // ヘッダー行を追加（A1から始める）
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A1`,
-        valueInputOption: 'RAW',
-        resource: {
-          values: [[
-            '年齢', '名前', '性別', '契約先会社名', '金額', 'サービス名', 
-            '電話番号', 'メールアドレス', '契約日', '書面受領日', 
-            '書面受領方法', '電子書面詳細', '契約方法', '審査結果', 
-            '送信日', '送信時間'
-          ]]
-        }
-      });
+      const rows = checkResponse.data.values || [];
+      console.log('現在の行数:', rows.length);
       
-      // データを追加（A2から始める）
+      // ヘッダー行がなければ追加（通常は既に存在するはず）
+      if (rows.length === 0) {
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `${SHEET_NAME}!A1`,
+          valueInputOption: 'RAW',
+          resource: {
+            values: [[
+              '年齢', '名前', '性別', '契約先会社名', '金額', 'サービス名', 
+              '電話番号', 'メールアドレス', '契約日', '書面受領日', 
+              '書面受領方法', '電子書面詳細', '契約方法', '審査結果', 
+              '送信日', '送信時間'
+            ]]
+          }
+        });
+      }
+      
+      // 新しい行の位置を計算（既存データの行数+1）
+      // 最低でも2行目から開始（ヘッダーが1行目にある場合）
+      const newRowPosition = Math.max(rows.length, 1) + 1;
+      console.log('新しいデータの挿入位置:', newRowPosition);
+      
+      // データを追加（計算した行から始める）
       const response = await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A2`,
+        range: `${SHEET_NAME}!A${newRowPosition}`,
         valueInputOption: 'RAW',
         resource: {
           values: values
