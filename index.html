@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>クーリングオフ審査アンケート</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>クーリングオフ審査アンケート</h1>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="step-indicators">
+                    <div class="step active">1</div>
+                    <div class="step">2</div>
+                    <div class="step">3</div>
+                    <div class="step">4</div>
+                    <div class="step">5</div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <form id="cooling-off-form">
+                <!-- ステップ1: 導入と基本情報 -->
+                <section class="form-step" id="step-1">
+                    <h2>基本情報</h2>
+                    <p class="introduction">
+                        このアンケートは、お客様が締結されたご契約がクーリングオフ制度の対象となる可能性を診断するためのものです。
+                        いくつかのご質問にお答えいただくことで、今後のご対応についての手がかりを得ることができます。
+                    </p>
+
+                    <div class="form-group">
+                        <label for="age">年齢 <span class="required">*</span></label>
+                        <input type="number" id="age" name="age" min="18" max="120" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">姓 <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="firstName">名 <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>性別 <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="gender" value="男性" required>
+                                男性
+                            </label>
+                            <label>
+                                <input type="radio" name="gender" value="女性">
+                                女性
+                            </label>
+                            <label>
+                                <input type="radio" name="gender" value="その他">
+                                その他
+                            </label>
+                            <label>
+                                <input type="radio" name="gender" value="回答しない">
+                                回答しない
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">電話番号 <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="例: 090-1234-5678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">メールアドレス <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="例: example@mail.com" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn next-btn" onclick="nextStep(1)">次へ</button>
+                    </div>
+                </section>
+
+                <!-- ステップ2: 契約情報 -->
+                <section class="form-step" id="step-2">
+                    <h2>契約情報</h2>
+
+                    <div class="form-group">
+                        <label for="companyName">契約先会社名 <span class="required">*</span></label>
+                        <input type="text" id="companyName" name="companyName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceName">契約したサービス名または商品名 <span class="required">*</span></label>
+                        <input type="text" id="serviceName" name="serviceName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contractAmount">契約金額（円） <span class="required">*</span></label>
+                        <input type="number" id="contractAmount" name="contractAmount" min="0" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn prev-btn" onclick="prevStep(2)">前へ</button>
+                        <button type="button" class="btn next-btn" onclick="nextStep(2)">次へ</button>
+                    </div>
+                </section>
+
+                <!-- ステップ3: 契約状況 -->
+                <section class="form-step" id="step-3">
+                    <h2>契約状況</h2>
+
+                    <div class="form-group">
+                        <label for="contractDate">契約を申し込んだ日 <span class="required">*</span></label>
+                        <input type="date" id="contractDate" name="contractDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>契約書面または申込書面を受け取りましたか？ <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="receivedDocument" value="はい" required onchange="toggleDocumentFields(true)">
+                                はい
+                            </label>
+                            <label>
+                                <input type="radio" name="receivedDocument" value="いいえ" onchange="toggleDocumentFields(false)">
+                                いいえ
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="documentTypeGroup" style="display: none;">
+                        <label>どちらの書面を受け取りましたか？ <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="documentType" value="契約書面">
+                                契約書面
+                            </label>
+                            <label>
+                                <input type="radio" name="documentType" value="申込書面">
+                                申込書面
+                            </label>
+                            <label>
+                                <input type="radio" name="documentType" value="両方">
+                                両方
+                            </label>
+                            <label>
+                                <input type="radio" name="documentType" value="不明">
+                                どちらか不明
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 新規：書面の受領方法 -->
+                    <div class="form-group" id="documentDeliveryMethodGroup" style="display: none;">
+                        <label>契約書面または申込書面はどのように受け取りましたか？ <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="documentDeliveryMethod" value="紙で手渡された" onchange="toggleElectronicDocumentFields(false)">
+                                紙で手渡された
+                            </label>
+                            <label>
+                                <input type="radio" name="documentDeliveryMethod" value="郵送で届いた" onchange="toggleElectronicDocumentFields(false)">
+                                郵送で届いた
+                            </label>
+                            <label>
+                                <input type="radio" name="documentDeliveryMethod" value="電子メールに添付されていた" onchange="toggleElectronicDocumentFields(true)">
+                                電子メールに添付されていた
+                            </label>
+                            <label>
+                                <input type="radio" name="documentDeliveryMethod" value="ウェブサイトからダウンロードした" onchange="toggleElectronicDocumentFields(true)">
+                                ウェブサイトからダウンロードした
+                            </label>
+                            <label>
+                                <input type="radio" name="documentDeliveryMethod" value="その他" onchange="toggleOtherDeliveryMethodField()">
+                                その他
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 新規：その他の受領方法の詳細 -->
+                    <div class="form-group" id="otherDeliveryMethodGroup" style="display: none;">
+                        <label for="otherDeliveryMethod">その他の受け取り方法を具体的に記入してください <span class="required">*</span></label>
+                        <input type="text" id="otherDeliveryMethod" name="otherDeliveryMethod">
+                    </div>
+
+                    <!-- 新規：電子書面に関する追加質問 -->
+                    <div id="electronicDocumentQuestions" style="display: none;">
+                        <div class="form-group">
+                            <label>電子書面の受け取りについて事前に承諾しましたか？ <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="electronicConsent" value="はい">
+                                    はい、事前に承諾しました
+                                </label>
+                                <label>
+                                    <input type="radio" name="electronicConsent" value="いいえ">
+                                    いいえ、承諾していません
+                                </label>
+                                <label>
+                                    <input type="radio" name="electronicConsent" value="不明">
+                                    覚えていない/わからない
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>電子書面はどのようなファイル形式でしたか？ <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="fileFormat" value="PDF">
+                                    PDF
+                                </label>
+                                <label>
+                                    <input type="radio" name="fileFormat" value="Word">
+                                    Word文書
+                                </label>
+                                <label>
+                                    <input type="radio" name="fileFormat" value="Excel">
+                                    Excel
+                                </label>
+                                <label>
+                                    <input type="radio" name="fileFormat" value="画像">
+                                    画像ファイル（JPG、PNGなど）
+                                </label>
+                                <label>
+                                    <input type="radio" name="fileFormat" value="ウェブページ">
+                                    ウェブページ
+                                </label>
+                                <label>
+                                    <input type="radio" name="fileFormat" value="その他">
+                                    その他
+                                </label>
+                                <label>
+                                    <input type="radio" name="fileFormat" value="不明">
+                                    わからない
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>電子書面は開封/閲覧できましたか？ <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="documentAccessible" value="はい">
+                                    はい、問題なく開封/閲覧できました
+                                </label>
+                                <label>
+                                    <input type="radio" name="documentAccessible" value="いいえ">
+                                    いいえ、開封/閲覧できませんでした
+                                </label>
+                                <label>
+                                    <input type="radio" name="documentAccessible" value="一部">
+                                    一部のみ開封/閲覧できました
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="documentDateGroup" style="display: none;">
+                        <label for="documentDate">書面を受け取った日 <span class="required">*</span></label>
+                        <input type="date" id="documentDate" name="documentDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contractMethod">契約場所または契約方法 <span class="required">*</span></label>
+                        <select id="contractMethod" name="contractMethod" required onchange="handleContractMethodChange()">
+                            <option value="">選択してください</option>
+                            <option value="home_visit">自宅での訪問販売</option>
+                            <option value="workplace_visit">職場での訪問販売</option>
+                            <option value="street_catch">路上でのキャッチセールス</option>
+                            <option value="appointment">アポイントメントセールス</option>
+                            <option value="phone">電話での勧誘</option>
+                            <option value="esthetic">エステティック</option>
+                            <option value="beauty_medical">美容医療</option>
+                            <option value="language_school">語学教室</option>
+                            <option value="home_tutor">家庭教師</option>
+                            <option value="cram_school">学習塾</option>
+                            <option value="pc_school">パソコン教室</option>
+                            <option value="marriage_service">結婚相手紹介サービス</option>
+                            <option value="visit_purchase">業者が自宅等を訪問して物品を購入</option>
+                            <option value="mlm">連鎖販売取引（マルチ商法）</option>
+                            <option value="work_opportunity">業務提供誘引販売取引（内職・モニター商法）</option>
+                            <option value="online_shopping">インターネット通販</option>
+                            <option value="catalog_shopping">カタログ通販</option>
+                            <option value="store">実店舗での購入</option>
+                            <option value="other">その他</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="otherContractMethodGroup" style="display: none;">
+                        <label for="otherContractMethod">その他の契約方法を具体的に記入してください <span class="required">*</span></label>
+                        <input type="text" id="otherContractMethod" name="otherContractMethod">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn prev-btn" onclick="prevStep(3)">前へ</button>
+                        <button type="button" class="btn next-btn" onclick="nextStep(3)">次へ</button>
+                    </div>
+                </section>
+
+                <!-- ステップ4: 取引類型に応じた詳細質問 -->
+                <section class="form-step" id="step-4">
+                    <h2>詳細情報</h2>
+                    
+                    <!-- 動的に生成される質問がここに表示されます -->
+                    <div id="dynamic-questions"></div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn prev-btn" onclick="prevStep(4)">前へ</button>
+                        <button type="button" class="btn next-btn" onclick="nextStep(4)">次へ</button>
+                    </div>
+                </section>
+
+                <!-- ステップ5: 審査結果 -->
+                <section class="form-step" id="step-5">
+                    <h2>審査結果</h2>
+                    
+                    <div id="result-container">
+                        <div class="result-box">
+                            <h3>診断結果</h3>
+                            <p id="result-message"></p>
+                            <div id="result-details"></div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn prev-btn" onclick="prevStep(5)">前へ</button>
+                        <button type="button" class="btn submit-btn" id="final-button" onclick="submitForm()">終了したらコチラ</button>
+                    </div>
+                </section>
+            </form>
+        </main>
+
+        <footer>
+            <p>© 2025 クーリングオフ審査アンケート</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
